@@ -7,6 +7,18 @@
 
 namespace Spryker\Zed\ProductSetGui\Communication\Controller;
 
+use Orm\Zed\Acl\Persistence\Map\SpyAclEntityRuleTableMap;
+use Orm\Zed\Acl\Persistence\SpyAclEntityRule;
+use Orm\Zed\Customer\Persistence\Base\SpyCustomerQuery;
+use Orm\Zed\Customer\Persistence\Map\SpyCustomerTableMap;
+use Orm\Zed\Customer\Persistence\SpyCustomer;
+use Orm\Zed\Customer\Persistence\SpyCustomerAddress;
+use Orm\Zed\Customer\Persistence\SpyCustomerAddressQuery;
+use Orm\Zed\Merchant\Persistence\Map\SpyMerchantTableMap;
+use Orm\Zed\Merchant\Persistence\SpyMerchantQuery;
+use Orm\Zed\MerchantSalesOrder\Persistence\Base\SpyMerchantSalesOrder;
+use Orm\Zed\MerchantSalesOrder\Persistence\Map\SpyMerchantSalesOrderTableMap;
+use Orm\Zed\MerchantSalesOrder\Persistence\SpyMerchantSalesOrderQuery;
 use Spryker\Zed\Kernel\Communication\Controller\AbstractController;
 use Orm\Zed\Company\Persistence\SpyCompanyQuery;
 use Orm\Zed\Product\Persistence\SpyProductAbstract;
@@ -16,6 +28,7 @@ use Orm\Zed\Product\Persistence\SpyProductQuery;
 use Orm\Zed\ProductBundle\Persistence\SpyProductBundleQuery;
 use Orm\Zed\ProductReview\Persistence\SpyProductReviewQuery;
 use Propel\Runtime\ActiveQuery\ModelCriteria;
+use Spryker\Zed\Kernel\Locator;
 
 /**
  * @method \Spryker\Zed\ProductSetGui\Communication\ProductSetGuiCommunicationFactory getFactory()
@@ -28,13 +41,49 @@ class IndexController extends AbstractController
      */
     protected function aclDemo(): void
     {
+        $merchantEntityName = (new SpyMerchantTableMap())->getPhpName();
+        $merchantOrderEntityName = (new SpyMerchantSalesOrderTableMap())->getPhpName();
+
+
+//        foreach ([
+//            SpyAclEntityRuleTableMap::COL_OPERATION_CREATE,
+//            SpyAclEntityRuleTableMap::COL_OPERATION_UPDATE,
+//             SpyAclEntityRuleTableMap::COL_OPERATION_READ] as $op ) {
+//        $aclRule = new SpyAclEntityRule();
+//        $aclRule->setOperation($op);
+//        $aclRule->setScope(SpyAclEntityRuleTableMap::COL_SCOPE_PER_ITEM);
+//        $aclRule->setEntity($merchantEntityName);
+//        $aclRule->setFkAclGroup(1);
+////        $aclRule->setAccessibleProperties(['id_customer', 'last_name', 'email' ]);
+//        $aclRule->save();
+//
+//        $aclRule = new SpyAclEntityRule();
+//        $aclRule->setOperation($op);
+//        $aclRule->setScope(SpyAclEntityRuleTableMap::COL_SCOPE_INHERITED);
+//        $aclRule->setEntity($merchantOrderEntityName);
+//        $aclRule->setFkAclGroup(1);
+////        $aclRule->setAccessibleProperties(['id_customer', 'last_name', 'email' ]);
+//        $aclRule->save();
+//    }
+
+
+        $query = SpyMerchantSalesOrderQuery::create();
+        $query->find();
+
+        dd($query->find()->toArray());
+        $params = [];
+        echo \SqlFormatter::format($query->createSelectSql($params));
+        die;
         /* Example for simple select query for the segment. */
-        $query = SpyProductAbstractQuery::create()
-            ->filterByIdProductAbstract(35);
-
-        $this->showQuerySql($query);
+//        $query = SpyProductAbstractQuery::create()
+//            ->filterByIdProductAbstract(35);
+//
+//        $this->showQuerySql($query);
         /************************************************/
+        /** @var \Spryker\Zed\Acl\Business\AclFacade $aclFacade */
+        $aclFacade = Locator::getInstance()->acl()->facade();
 
+        $aclFacade->getEntityAccessRuleSet(1, SpyCustomerTableMap::OM_CLASS);
 
 
 //        /** WHEN QUERY WITHOUT ACL RESTRICTIONS TRYING TO JOIN THE TABLE WITH */
@@ -43,12 +92,37 @@ class IndexController extends AbstractController
 //                ->joinCustomer()
 //            ->endUse();
 //
-//        $this->showQuerySql($query);
+//        $query = SpyCustomerQuery::create()->filterByIdCustomer_In([1, 2])->setFormatter(ModelCriteria::FORMAT_ON_DEMAND);
+        $query = SpyCustomerQuery::create()->joinWithSpyComment()->findPk(1);
+        $query->setGender(SpyCustomerTableMap::COL_GENDER_FEMALE);
+        $query->save();
+
+        dd($query);
+        dd($query);
+        xdebug_break();
+        $result = $query->find();
+        foreach ($result as $item) {
+            dump($item);
+        }
+        die;
+        $params = [];
+
+        $sqlWithAcl = $query->createSelectSql($params);
+        dd($result);
+//
+//        foreach ($query as $item) {
+//            dd($item);
+//        }
+
+//        $result = $query->find()->toArray();
+//        dd($result);
+////        $query = SpyCustomerAddressQuery::create()->filterByFkCountry(1);
+        $this->showQuerySql($query);
 //        /************************************************/
 
 
 
-//        /* SUBQUERY CASE */
+        /* SUBQUERY CASE */
 //        $query = SpyProductBundleQuery::create()
 //            ->addSelectQuery(
 //                SpyProductBundleQuery::create()
@@ -64,9 +138,9 @@ class IndexController extends AbstractController
 
 
 //        /* WHEN TABLE INHERITS ACL RESTRICTION FROM SEVERAL SEGMENTS, WITH DIRECT RELATION, AND WITHOUT */
-//        $query = SpyProductReviewQuery::create();
-//
-//        $this->showQuerySql($query);
+        $query = SpyProductReviewQuery::create();
+
+        $this->showQuerySql($query);
 //       /************************************************/
 
 
@@ -87,19 +161,19 @@ class IndexController extends AbstractController
      */
     protected function showQuerySql(ModelCriteria $query): void
     {
-            $parameters = [];
+        $parameters = [];
+        echo '<H1>WITHOUT ACL</H1>';
 
-            echo '<H1>WITHOUT ACL</H1>';
         $sqlWithoutAcl = $query->createSelectSql($parameters);
         echo \SqlFormatter::format($sqlWithoutAcl);
-
-        $query->find();
+        xdebug_break();
+        $result = $query->find();
 
         $sqlWithAcl = $query->createSelectSql($parameters);
 
         echo '<H1>WITH ACL</H1>';
         echo \SqlFormatter::format($sqlWithAcl);
-
+        dd($result->toArray());
         die();
     }
 
