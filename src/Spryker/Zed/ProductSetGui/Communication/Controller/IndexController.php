@@ -15,6 +15,7 @@ use Orm\Zed\Customer\Persistence\SpyCustomer;
 use Orm\Zed\Customer\Persistence\SpyCustomerAddress;
 use Orm\Zed\Customer\Persistence\SpyCustomerAddressQuery;
 use Orm\Zed\Merchant\Persistence\Map\SpyMerchantTableMap;
+use Orm\Zed\Merchant\Persistence\SpyMerchant;
 use Orm\Zed\Merchant\Persistence\SpyMerchantQuery;
 use Orm\Zed\MerchantProduct\Persistence\Base\SpyMerchantProductAbstract;
 use Orm\Zed\MerchantProduct\Persistence\Map\SpyMerchantProductAbstractTableMap;
@@ -22,6 +23,10 @@ use Orm\Zed\MerchantProduct\Persistence\SpyMerchantProductAbstractQuery;
 use Orm\Zed\MerchantSalesOrder\Persistence\Base\SpyMerchantSalesOrder;
 use Orm\Zed\MerchantSalesOrder\Persistence\Map\SpyMerchantSalesOrderTableMap;
 use Orm\Zed\MerchantSalesOrder\Persistence\SpyMerchantSalesOrderQuery;
+use Orm\Zed\ProductOffer\Persistence\SpyProductOffer;
+use Orm\Zed\ProductOffer\Persistence\SpyProductOfferQuery;
+use Propel\Runtime\ActiveQuery\Join;
+use Spryker\Shared\Acl\AclConstants;
 use Spryker\Zed\Kernel\Communication\Controller\AbstractController;
 use Orm\Zed\Company\Persistence\SpyCompanyQuery;
 use Orm\Zed\Product\Persistence\SpyProductAbstract;
@@ -45,6 +50,9 @@ class IndexController extends AbstractController
      */
     protected function aclDemo(): void
     {
+//        new Join()
+//          SpyMerchantQuery::create()
+//              ->addJoin('SpyMerchant', '')
 //        $videoKingGroup = 3;
 //        $sprykerGroup = 4;
 //        $catalogViewerGroup = 5;
@@ -54,11 +62,11 @@ class IndexController extends AbstractController
 //        $sprykerMerchant = 6;
 //        $videoKingMerchant = 7;
 //
-//        $operations = [
-//            SpyAclEntityRuleTableMap::COL_OPERATION_CREATE,
-//            SpyAclEntityRuleTableMap::COL_OPERATION_UPDATE,
-//            SpyAclEntityRuleTableMap::COL_OPERATION_READ
-//        ];
+//        $readUpdateCreate =
+//            AclConstants::ENTNTY_PERMISSION_MASK_READ &
+//            AclConstants::ENTNTY_PERMISSION_MASK_CREATE &
+//            AclConstants::ENTNTY_PERMISSION_MASK_UPDATE
+//        ;
 //
 //
 //
@@ -68,33 +76,42 @@ class IndexController extends AbstractController
 //
 //        foreach ([$videoKingGroup, $sprykerGroup] as $merchantGroup) {
 //            $aclRule = new SpyAclEntityRule();
-//            $aclRule->setOperation(SpyAclEntityRuleTableMap::COL_OPERATION_READ);
-//            $aclRule->setScope(SpyAclEntityRuleTableMap::COL_SCOPE_PER_ITEM);
+//            $aclRule->setPermissionMask(AclConstants::ENTNTY_PERMISSION_MASK_READ);
+//            $aclRule->setScope(SpyAclEntityRuleTableMap::COL_SCOPE_SEGMENT);
 //            $aclRule->setEntity($merchantEntityName);
-//            $aclRule->setFkAclGroup($merchantGroup);
+//            $aclRule->setFkAclRole($merchantGroup);
 //            $aclRule->save();
-//        }
 //
-//        foreach ($operations as $o) {
 //            $aclRule = new SpyAclEntityRule();
-//            $aclRule->setOperation($o);
+//            $aclRule->setPermissionMask($readUpdateCreate);
 //            $aclRule->setScope(SpyAclEntityRuleTableMap::COL_SCOPE_INHERITED);
 //            $aclRule->setEntity($merchantProductAbstract);
-//            $aclRule->setFkAclGroup($catalogManagerGroup);
+//            $aclRule->setFkAclRole($merchantGroup);
 //            $aclRule->save();
-//        }
 //
+//        }
+
+
 //        $aclRule = new SpyAclEntityRule();
-//        $aclRule->setOperation(SpyAclEntityRuleTableMap::COL_OPERATION_READ);
+//        $aclRule->setPermissionMask($readUpdateCreate);
 //        $aclRule->setScope(SpyAclEntityRuleTableMap::COL_SCOPE_INHERITED);
 //        $aclRule->setEntity($merchantProductAbstract);
-//        $aclRule->setFkAclGroup($catalogViewerGroup);
+//        $aclRule->setFkAclRole($catalogManagerGroup);
 //        $aclRule->save();
 //
+//        $aclRule = new SpyAclEntityRule();
+//        $aclRule->setPermissionMask(AclConstants::ENTNTY_PERMISSION_MASK_READ);
+//        $aclRule->setScope(SpyAclEntityRuleTableMap::COL_SCOPE_INHERITED);
+//        $aclRule->setEntity($merchantProductAbstract);
+//        $aclRule->setFkAclRole($catalogViewerGroup);
+//        $aclRule->save();
+
 //        die;
 
+//        (new SpyMerchant())->save();
 
-        $query = SpyMerchantProductAbstractQuery::create();
+        $query = SpyProductOfferQuery::create();
+//        $query = SpyMerchantProductAbstractQuery::create();
 //        $query = SpyMerchantQuery::create();
         $this->debugQuery($query);
         $params = [];
