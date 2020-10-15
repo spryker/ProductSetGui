@@ -50,9 +50,7 @@ class IndexController extends AbstractController
      */
     protected function aclDemo(): void
     {
-//        new Join()
-//          SpyMerchantQuery::create()
-//              ->addJoin('SpyMerchant', '')
+
 //        $videoKingGroup = 3;
 //        $sprykerGroup = 4;
 //        $catalogViewerGroup = 5;
@@ -78,6 +76,7 @@ class IndexController extends AbstractController
 //            $aclRule = new SpyAclEntityRule();
 //            $aclRule->setPermissionMask(AclConstants::ENTNTY_PERMISSION_MASK_READ);
 //            $aclRule->setScope(SpyAclEntityRuleTableMap::COL_SCOPE_SEGMENT);
+//            $aclRule->setFkAclEntitySegment(1);
 //            $aclRule->setEntity($merchantEntityName);
 //            $aclRule->setFkAclRole($merchantGroup);
 //            $aclRule->save();
@@ -90,8 +89,8 @@ class IndexController extends AbstractController
 //            $aclRule->save();
 //
 //        }
-
-
+//
+//
 //        $aclRule = new SpyAclEntityRule();
 //        $aclRule->setPermissionMask($readUpdateCreate);
 //        $aclRule->setScope(SpyAclEntityRuleTableMap::COL_SCOPE_INHERITED);
@@ -105,14 +104,14 @@ class IndexController extends AbstractController
 //        $aclRule->setEntity($merchantProductAbstract);
 //        $aclRule->setFkAclRole($catalogViewerGroup);
 //        $aclRule->save();
-
+//
 //        die;
 
 //        (new SpyMerchant())->save();
 
-        $query = SpyProductOfferQuery::create();
+//        $query = SpyProductOfferQuery::create();
 //        $query = SpyMerchantProductAbstractQuery::create();
-//        $query = SpyMerchantQuery::create();
+        $query = SpyMerchantQuery::create();
         $this->debugQuery($query);
         $params = [];
         echo \SqlFormatter::format($query->createSelectSql($params));
